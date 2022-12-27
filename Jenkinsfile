@@ -18,7 +18,8 @@ pipeline {
             steps {
                 // 如果失败，重试两次
                 retry (2) {
-                    sh 'docker build -t cicd_demo:\${GIT_COMMIT:0:5} .'
+                    // 由于使用了切割字符串的语法，所以要使用bash执行
+                    sh '/bin/bash docker build -t cicd_demo:${GIT_COMMIT:0:5} .'
                     echo '构建镜像成功'
                 }
             }
