@@ -18,7 +18,7 @@ pipeline {
             steps {
                 // 如果失败，重试两次
                 retry (2) {
-                    sh 'docker build -t cicd_demo:${GIT_COMMIT:0:5} .'
+                    sh 'docker build -t cicd_demo:\${GIT_COMMIT:0:5} .'
                     echo '构建镜像成功'
                 }
             }
