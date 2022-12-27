@@ -3,6 +3,11 @@ pipeline {
     stages {
         stage('环境变量') {
             steps {
+                // 在script中给环境变量赋值
+                script {
+                    sh 'git log --oneline -n 1 > gitlog.file'
+                    env.GIT_LOG = readFile("gitlog.file").trim()
+                }
                 sh 'printenv'
             }
         }
@@ -22,7 +27,7 @@ pipeline {
                     sh '''#!/bin/bash
                         docker build -t cicd_demo:${GIT_COMMIT:0:5} .
                     '''
-                    echo '构建镜像成功'
+                    echo '构建镜像成功，信息：${GIT_LOG}'
                 }
             }
         }
