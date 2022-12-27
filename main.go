@@ -8,7 +8,7 @@ import (
 func main() {
 
 	http.HandleFunc("/index", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("hello world"))
+		w.Write([]byte("hello world1"))
 	})
 
 	fmt.Println("server running")
