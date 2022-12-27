@@ -26,7 +26,10 @@ pipeline {
 
         stage('更新pod') {
             steps {
-                echo '更新pod'
+                // 步骤的超时时间
+                timeout(time: 1, unit: 'MINUTES') {
+                    echo '更新pod'
+                }
             }
         }
     }
