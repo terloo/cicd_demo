@@ -27,7 +27,7 @@ pipeline {
                     sh '''#!/bin/bash
                         docker build -t cicd_demo:${GIT_COMMIT:0:5} .
                     '''
-                    echo '构建镜像成功，信息：' $GIT_LOG
+                    echo "构建镜像成功，信息： $GIT_LOG"
                 }
             }
         }
