@@ -1,5 +1,12 @@
 pipeline {
     agent {label 'k8s-jenkins-slave'}
+
+    // 新设置一些环境变量
+    environment {
+        IMAGE_TAG = "{GIT_COMMIT:0:5}"
+        IMAGE_NAME = "cicd_demo:${IMAGE_TAG}"
+    }
+
     stages {
         stage('环境变量') {
             steps {
@@ -25,7 +32,7 @@ pipeline {
                 retry (2) {
                     // 由于使用了切割字符串的语法，所以要使用bash执行
                     sh '''#!/bin/bash
-                        docker build -t cicd_demo:${GIT_COMMIT:0:5} .
+                        docker build -t ${IMAGE_NAME} .
                     '''
                     echo "构建镜像成功，信息： $GIT_LOG"
                 }
@@ -36,7 +43,10 @@ pipeline {
             steps {
                 // 步骤的超时时间
                 timeout(time: 1, unit: 'MINUTES') {
-                    echo '更新pod'
+                    sh '''#!/bin/bash
+                        curl https://kubernetes.default/apps/v1/deployment/cicd-demo --cacert ca.crt -H "Authorization: Bearer `cat token`" -X PATCH \
+                        -d '{"spec": {"template": {"spec": {"containers": [{"name": "cicd","image": "$IMAGE_NAME"}]}}}}'
+                    '''
                 }
             }
         }
