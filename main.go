@@ -14,6 +14,6 @@ func main() {
 	fmt.Println("server running")
 	err := http.ListenAndServe(":31800", nil)
 	if err != nil {
-		fmt.Println("server run err %v", err)
+		fmt.Printf("server run err %v", err)
 	}
 }
