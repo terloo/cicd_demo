@@ -3,7 +3,7 @@ pipeline {
 
     // 新设置一些环境变量
     environment {
-        IMAGE_TAG = "{GIT_COMMIT}".substring(0, 5)
+        IMAGE_TAG = "${GIT_COMMIT}".substring(0, 5)
         IMAGE_NAME = "cicd_demo:${IMAGE_TAG}"
     }
 
