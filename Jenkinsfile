@@ -46,7 +46,12 @@ pipeline {
                   path: /etc/docker/daemon.json
             '''
         }
+    }
 
+    options {
+        timestamps()  // 日志添加时间
+        disableConcurrentBuilds() // 禁止并行构建
+        timeout(time: 1, unit: 'HOURS') // 流水线超时时间
     }
 
     // 新设置一些环境变量
