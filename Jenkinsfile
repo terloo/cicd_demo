@@ -56,8 +56,9 @@ pipeline {
 
     // 新设置一些环境变量
     environment {
+        ALI_IMAGE_REGISTRY = credentials('ali-docker-image-registry')
         IMAGE_TAG = "${GIT_COMMIT}".substring(0, 5)
-        IMAGE_NAME = "cicd_demo:${IMAGE_TAG}"
+        IMAGE_NAME = "registry.cn-chengdu.aliyuncs.com/nonosword/cicd_demo:${IMAGE_TAG}"
         HOST_WORKSPACE = "${WORKSPACE}".replaceAll("${AGENT_WORKDIR}", "${JENKINS_HOME}")
     }
 
@@ -99,6 +100,16 @@ pipeline {
                         sh "docker build -t $IMAGE_NAME ."
                         echo "构建镜像成功，信息： $GIT_LOG"
                     }
+                }
+            }
+        }
+
+        stage('上传镜像') {
+            steps {
+                container('docker') {
+                    sh 'docker login -u $ALI_IMAGE_REGISTRY_USR registry.cn-chengdu.aliyuncs.com -p $ALI_IMAGE_REGISTRY_PSW'
+                    sh "docker push $IMAGE_NAME"
+                    echo '上传镜像完毕'
                 }
             }
         }
