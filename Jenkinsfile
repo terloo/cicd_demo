@@ -57,9 +57,13 @@ pipeline {
     // 新设置一些环境变量
     environment {
         ALI_IMAGE_REGISTRY = credentials('ali-docker-image-registry')
-        IMAGE_TAG = "${GIT_COMMIT}".substring(0, 5)
-        IMAGE_NAME = "registry.cn-chengdu.aliyuncs.com/nonosword/cicd_demo:${IMAGE_TAG}"
         HOST_WORKSPACE = "${WORKSPACE}".replaceAll("${AGENT_WORKDIR}", "${JENKINS_HOME}")
+    }
+
+    // 构建时选择参数
+    parameters {
+        string(name: 'CUSTOM_TAG', defaultValue: '', description: '是否自定义tag，为空时使用commitId前5位')
+        booleanParam(name: 'UPDATE_DEPLOY', defaultValue: true, description: '是否更新deployment镜像')
     }
 
     stages {
@@ -69,6 +73,14 @@ pipeline {
                 script {
                     sh 'git log --oneline -n 1 > gitlog.file'
                     env.GIT_LOG = readFile("gitlog.file").trim()
+                }
+                script {
+                    if (env.CUSTOM_TAG == '') {
+                        env.IMAGE_TAG = "${GIT_COMMIT}".substring(0, 5)
+                    } else {
+                        env.IMAGE_TAG = CUSTOM_TAG
+                    }
+                    env.IMAGE_NAME = "registry.cn-chengdu.aliyuncs.com/nonosword/cicd_demo:${IMAGE_TAG}"
                 }
                 sh 'printenv'
             }
